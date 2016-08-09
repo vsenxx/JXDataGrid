@@ -1,0 +1,23 @@
+.jx-DataGrid-tollbar{
+	
+	height: 35px;
+	
+}
+.jx-DataGrid-tollbar-station{
+	
+	float: right;
+	background: #1B6D85;
+	
+}
+
+
+
+.btn-group{
+	float: left;
+	margin-left: 5px;
+	background: #1B6D85;
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	box-sizing: border-box;
+}
