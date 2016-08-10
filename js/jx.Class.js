@@ -61,7 +61,22 @@ jx.Class = function(){};
      
     return jx_Class;  
   }
-  
+ jx.Base = jx.Class.extend({
+		 	isEmpty:function(data){
+				 if(data == 'undefined' || data == undefined || data == null){
+				 	return true;
+				 }else if( $.type(data) == 'string'){
+				 	 return !( data && data != '' && data != undefined && data != null && data.length > 0);
+				 }else if( $.type(data) == 'array' ){
+				 	return !( data &&  data != undefined && data != null && data.length > 0);
+				 }else if( $.type(data) == 'object'){
+				 	return $.isEmptyObject(data);
+				 }else if( $.type(data) == 'function'){
+				 	return false;
+				 }
+				return true;
+			}
+	});
 })();
 
 

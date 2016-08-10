@@ -1,0 +1,12 @@
+﻿<jscompress public="http://www.jscompress.cn/" command="import-combineset">
+<combinefile path="jx.datagrid.all.js">
+    <auto value="1" />
+    <sourcefile path=".\jx.Class.js" />
+    <sourcefile path=".\jx.datagrid.toolbar.item.js" />
+    <sourcefile path=".\jx.datagrid.toolbar.js" />
+    <sourcefile path=".\jx.datagrid.js" />
+    <sourcefile path=".\jx.datagrid.table.thead.filter.js" />
+    <sourcefile path=".\jx.datagrid.table.thead.js" />
+    <sourcefile path=".\jx.datagrid.table.js" />
+</combinefile>
+</jscompress>

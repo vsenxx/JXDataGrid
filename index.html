@@ -5,8 +5,7 @@
 		<title></title>
 	<script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
 	<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/jx.Class.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/jx.datagrid.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jx.datagrid.all.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" href="css/jx.datagrid.css"/>
 	</head>
@@ -14,16 +13,28 @@
 		<div id="iiii"></div>
 		
 		<script >
+
 			var o = new jx.DataGrid(
 				{
 				 parent:$('#iiii'),
 				 title:"hahaha",
 				 toolBar:[
-				 			{title:"添加",url:"aaa",message:"sss",target:"_blank",element:null,callback:function(){alert(1)}}
-				 		 ]
+				 			{title:"添加",url:"aaa",message:"sss",target:"_blank",element:null,callback:function(){alert(1)}},
+				 			{title:"刷新",url:"aaa",message:"sss",target:"_blank",element:null}
+				 		 ],
+				 thead:[
+				 			{title:"id",key:"id",width:"",filter:'text'},
+				 			{title:"标题",key:"title",width:"",filter:'text'},
+				 			{title:"描述",key:"title",width:"",filter:$('<select class="form-control">')}
+				 		],
 				}
 				);
-			console.log(o);
+	
+
+
+
+
+
 		</script>
 	</body>
 </html>
