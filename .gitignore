@@ -3,3 +3,5 @@
 *.JSCompress
 js/*.JSCompress
 js/*.jscompress
+js/_FolderWatchConfig.jscompress
+js/jx.datagrid.all.js.JSCompress
