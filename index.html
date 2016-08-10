@@ -6,6 +6,9 @@
 	<script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
 	<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jx.datagrid.all.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="js/daterangepicker/js/moment.min.js" ></script>
+	<script src="js/daterangepicker/js/daterangepicker.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="js/daterangepicker/css/daterangepicker-bs3.css" />
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" href="css/jx.datagrid.css"/>
 	</head>
@@ -24,8 +27,9 @@
 				 		 ],
 				 thead:[
 				 			{title:"id",key:"id",width:"",filter:'text'},
-				 			{title:"标题",key:"title",width:"",filter:'text'},
-				 			{title:"描述",key:"title",width:"",filter:$('<select class="form-control">')}
+				 			{title:"标题",key:"title",width:"",filter:{classname:'select',options:[{text:"请选择",value:0}]}},
+				 			{title:"描述",key:"title",width:""},
+				 			{title:"创建时间",key:"title",width:"",filter:{classname:'daterangepicker'}}
 				 		],
 				}
 				);

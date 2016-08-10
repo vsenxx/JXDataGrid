@@ -269,17 +269,35 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 			if(this._filterData == 'text'){
 				this._selfElement = $('<input class="form-control" >').attr("name", this._key  );
 			}
+		
 		}else if(this._filterData instanceof jQuery){
 				this._selfElement = this._filterData ;
-		}else if(this._filterData instanceof HTMLElemen){
+		}else if(this._filterData instanceof HTMLElement ){
 				this._selfElement = this._filterData ;
 		}else if($.type( this._filterData ) == "object" && $.isPlainObject(this._filterData ) ){
 			if(this._filterData.classname == 'select'){
-				
-				
-			}else if(this._filterData.classname == 'daterangepicker'){
-				
-				
+				this._selfElement = $('<select class="form-control" >').attr("name", this._key  );
+				for(var x in this._filterData.options){
+					this._selfElement.append($('<option></option>').text( this._filterData.options[x].text ).val(this._filterData.options[x].value));				
+				}
+			}else if(this._filterData.classname == 'daterangepicker' || this._filterData.classname == 'datepicker' ){
+				this._selfElement = $('<input class="form-control" >').attr("name", this._key  );
+				var optionSet2 = {
+						opens: 'left',
+						format: 'YYYY-MM-DD',
+						singleDatePicker: this._filterData.classname == 'datepicker' ? true : false,
+						locale :{
+							"applyLabel": "确定",
+							"cancelLabel": "取消",
+							"fromLabel": "起始时间",
+							"toLabel": "结束时间'",
+							"weekLabel": "W",
+							"daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+							"monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+							"firstDay": 1
+						}
+				};
+				$(this._selfElement).daterangepicker(optionSet2);
 			}else if(this._filterData.classname == 'datepicker'){
 				
 				
@@ -354,8 +372,8 @@ jx.DataGrid_Table_Thead = jx.Base.extend({
 				}
 				head.find("label").text(this._theadDatas[x].title);
 				
-				var filter = new DataGrid_Table_Thead_Filter({key:this._theadDatas[x],key , data:this._theadDatas[x].filter} );
-				
+				var filter = new jx.DataGrid_Table_Thead_Filter({key:this._theadDatas[x].key , data:this._theadDatas[x].filter} );
+				head.find(">.form-group").eq(0).append(filter.render());
 				
 				this._selfElement.find('tr').eq(0).append(head);
 			}

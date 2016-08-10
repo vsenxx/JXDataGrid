@@ -18,8 +18,8 @@ jx.DataGrid_Table_Thead = jx.Base.extend({
 				}
 				head.find("label").text(this._theadDatas[x].title);
 				
-				var filter = new DataGrid_Table_Thead_Filter({key:this._theadDatas[x],key , data:this._theadDatas[x].filter} );
-				
+				var filter = new jx.DataGrid_Table_Thead_Filter({key:this._theadDatas[x].key , data:this._theadDatas[x].filter} );
+				head.find(">.form-group").eq(0).append(filter.render());
 				
 				this._selfElement.find('tr').eq(0).append(head);
 			}
