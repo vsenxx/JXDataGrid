@@ -1,3 +1,5 @@
 .project
 *.jscompress
 *.JSCompress
+js/*.JSCompress
+js/*.jscompress
