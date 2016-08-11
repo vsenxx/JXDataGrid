@@ -21,3 +21,14 @@
 	vertical-align: middle;
 	box-sizing: border-box;
 }
+
+
+.jx-DataGrid-box .select2-container .select2-selection--single{
+	
+	height: 34px !important;
+	
+}
+.custompanel-launcher{
+	
+	color: #D4D4D4;
+}

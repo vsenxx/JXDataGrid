@@ -8,9 +8,11 @@
 	<script src="js/jx.datagrid.all.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="js/daterangepicker/js/moment.min.js" ></script>
 	<script src="js/daterangepicker/js/daterangepicker.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/select2/js/select2.js"></script>
 	<link rel="stylesheet" href="js/daterangepicker/css/daterangepicker-bs3.css" />
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" href="css/jx.datagrid.css"/>
+	<link rel="stylesheet" type="text/css" href="js/select2/css/select2.min.css"/>
 	</head>
 	<body>
 		<div id="iiii"></div>
@@ -26,11 +28,21 @@
 				 			{title:"刷新",url:"aaa",message:"sss",target:"_blank",element:null}
 				 		 ],
 				 thead:[
-				 			{title:"id",key:"id",width:"",filter:'text'},
+				 			{title:"id",key:"id",width:"",filter:'text',primary:true},
 				 			{title:"标题",key:"title",width:"",filter:{classname:'select',options:[{text:"请选择",value:0}]}},
-				 			{title:"描述",key:"title",width:""},
-				 			{title:"创建时间",key:"title",width:"",filter:{classname:'daterangepicker'}}
+				 			{title:"描述",key:"description",width:"",filter:{classname:'searchselect'}},
+				 			{title:"创建时间",key:"creation_time",width:"",filter:{classname:'daterangepicker'}}
 				 		],
+				  datas:[
+				  			{id:1,title:"hia",description:"ioiuoio","creation_time":131564654},
+				  			{id:2,title:"trtrt",description:"uoighgm","creation_time":23423645},
+				  			{id:3,title:"fgfgf",description:"rtyrtytytry","creation_time":786553455},
+				  			{id:7,title:"fhggfgf",description:"nbfghhfsdcvbturtrt","creation_time":345646456},
+				  			{id:5,title:"fghfghh",description:"hmerterereretge","creation_time":564566454},
+				  		],
+				  custompanel:function(data){
+				  	return $("<div style='height: 200px;'>ahihihi</div>");
+				  }
 				}
 				);
 	

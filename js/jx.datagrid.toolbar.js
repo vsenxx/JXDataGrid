@@ -34,6 +34,11 @@ jx.DataGrid_Toolbar = jx.Base.extend({
 	clear:function(){
 		this._selfElement.find('.jx-DataGrid-tollbar-station').empty();
 		
+	},
+	renderAfter:function(){
+		for(var x in this._toolItems){
+			this._selfElement.find('.jx-DataGrid-tollbar-station').append( this._toolItems[x].renderAfter() );
+		}
 	}
 	
 });

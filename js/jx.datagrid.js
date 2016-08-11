@@ -11,7 +11,7 @@ jx.DataGrid = jx.Base.extend({
 		this._element.parent = options.parent || null;
 		this._selfElement = $('<div class="panel panel-default jx-DataGrid-box"><div class="panel-heading"></div><div class="panel-body"></div></div>');
 		this._toolBar = new jx.DataGrid_Toolbar({parent:this,ItemsDatas:options.toolBar});
-		this._table = new jx.DataGrid_Table({thead:options.thead});
+		this._table = new jx.DataGrid_Table({thead:options.thead, cellData:options.datas,custompanel:options.custompanel});
 		this.render();
 
 	},
@@ -23,10 +23,15 @@ jx.DataGrid = jx.Base.extend({
 		
 		
 		this._element.parent.append( this._selfElement );
+		this.renderAfter();
 	},
 	clear:function(){
 		this._selfElement.find(">.panel-heading").empty();
 		this._selfElement.find('>.panel-body').empty();
+	},
+	renderAfter:function(){
+		this._toolBar.renderAfter();
+		this._table.renderAfter();
 	}
 
 });

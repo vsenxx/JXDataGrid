@@ -11,7 +11,7 @@ jx.DataGrid_Toolbar_Item = jx.Base.extend({
 		if( this.isEmpty(this._itemData.element) ){
 			var btn = $("<button class='btn btn-success'></button>").text(this._itemData.title);//.attr({'url':itemData.url,"message":itemData.message,"target":itemData.target});
 			this._selfElement.append( btn );
-			this.bindEvent();
+			
 		}else{
 		   this._selfElement.append( this._itemData.element );
 		}
@@ -32,8 +32,12 @@ jx.DataGrid_Toolbar_Item = jx.Base.extend({
 			window.location.href = url;
 		}
 	},
+	renderAfter:function(){
+		this.bindEvent();
+	},
 	bindEvent:function(){
 		var __self = this;
+		if( !this.isEmpty(this._itemData.element) ){return ;}
 		if( !this.isEmpty(this._itemData.callback) ){
 			this._selfElement.find(">button").eq(0).on('click', this._itemData.callback );
 		}else{

@@ -2,6 +2,7 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 	_filterData:null,
 	_key:null,
 	init:function(options){
+		var __self = this;
 		this._filterData =  options.data || null;
 		this._key =  options.key || null;
 //		this._selfElement = $('<thead><tr></tr></thead>');
@@ -25,6 +26,7 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 				}
 			}else if(this._filterData.classname == 'daterangepicker' || this._filterData.classname == 'datepicker' ){
 				this._selfElement = $('<input class="form-control" >').attr("name", this._key  );
+				if(!$.fn.daterangepicker){return this;}
 				var optionSet2 = {
 						opens: 'left',
 						format: 'YYYY-MM-DD',
@@ -41,42 +43,47 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 						}
 				};
 				$(this._selfElement).daterangepicker(optionSet2);
-			}else if(this._filterData.classname == 'datepicker'){
-				
-				
 			}else if(this._filterData.classname == 'searchselect'){
-				
-				
-				
+			
+					this._selfElement = $('<select class="form-control" style="width:100%;"></select>').attr("name", this._key  );
+					
 			}
-			
-			
 		}
-
-		
-		
-		
-		
 	},
 	render:function(parentNode){
 		this.clear();
-			
+		
+		
 		if(!this.isEmpty(parentNode) ){
 			$(parentNode).append( this._selfElement );
 		}else{
 			return this._selfElement ;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+	},	
+	renderAfter:function(){
+		if( !this.isEmpty(this._filterData.classname) ){
+			if( this._filterData.classname == 'searchselect' ){
+				if(!$.fn.select2){return this;}
+				    this._selfElement.select2({
+						ajax:{
+							url:this._filterData.url,
+							type:"post",
+							cache: true,
+							dataType:"json",
+							data: function (params) {
+						          return {
+						            name: params.term, // search term
+						            page: params.page
+						          };
+				        	},
+				        	
+				        	delay: 200
+						}});
+			}
+			
+			
+		}
 	},
 	clear:function(){
 		
