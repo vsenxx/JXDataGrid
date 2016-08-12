@@ -13,7 +13,7 @@ jx.DataGrid_Toolbar = jx.Base.extend({
 		if(!this.isEmpty( this._toolBarItemsDatas ) ){
 			this._toolItems = [];
 			for(var x in this._toolBarItemsDatas){
-					var item = new jx.DataGrid_Toolbar_Item( {data:this._toolBarItemsDatas[x]} );
+					var item = new jx.DataGrid_Item( {data:this._toolBarItemsDatas[x]} );
 					this._toolItems.push(item);
 			}
 		}

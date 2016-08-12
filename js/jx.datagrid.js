@@ -1,29 +1,29 @@
 
 jx.DataGrid = jx.Base.extend({
-	title:"",
+	_title:"",
 	_selfElement:null,
 	_element:null,
-	toolBarItems:null,
 	_toolBar:null,
 	init:function(options){
 		this._element = {};
-		this.title  = options.title || '';
+		this._title  = options.title || '';
 		this._element.parent = options.parent || null;
 		this._selfElement = $('<div class="panel panel-default jx-DataGrid-box"><div class="panel-heading"></div><div class="panel-body"></div></div>');
 		this._toolBar = new jx.DataGrid_Toolbar({parent:this,ItemsDatas:options.toolBar});
-		this._table = new jx.DataGrid_Table({thead:options.thead, cellData:options.datas,custompanel:options.custompanel});
+		this._table = new jx.DataGrid_Table( options );
 		this.render();
 
 	},
 	render:function(){
 		this.clear();
-		this._selfElement.find(">.panel-heading").text(this.title);
+		this._selfElement.find(">.panel-heading").text(this._title);
 		this._selfElement.find('>.panel-body').eq(0).append( this._toolBar.render() );
 		this._selfElement.find('>.panel-body').eq(0).append( this._table.render() );
-		
-		
 		this._element.parent.append( this._selfElement );
 		this.renderAfter();
+	},
+	search:function(){
+		this._table.search();
 	},
 	clear:function(){
 		this._selfElement.find(">.panel-heading").empty();

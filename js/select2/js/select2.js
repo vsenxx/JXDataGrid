@@ -4173,7 +4173,7 @@ S2.define('select2/dropdown/attachBody',[
 
     var position = this.$container.position();
     var offset = this.$container.offset();
-console.log(offset);
+
     offset.bottom = offset.top + this.$container.outerHeight(false);
 
     var container = {

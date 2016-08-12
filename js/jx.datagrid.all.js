@@ -82,8 +82,8 @@ jx.Class = function(){};
 
 
 
-///<jscompress sourcefile="jx.datagrid.toolbar.item.js" />
-jx.DataGrid_Toolbar_Item = jx.Base.extend({
+///<jscompress sourcefile="jx.datagrid.item.js" />
+jx.DataGrid_Item = jx.Base.extend({
 	_parent:null,
 	_itemData:null,
 	_selfElement:null,
@@ -94,7 +94,12 @@ jx.DataGrid_Toolbar_Item = jx.Base.extend({
 	render:function( parentNode ){
 		this.clear();
 		if( this.isEmpty(this._itemData.element) ){
-			var btn = $("<button class='btn btn-success'></button>").text(this._itemData.title);//.attr({'url':itemData.url,"message":itemData.message,"target":itemData.target});
+			var btn = $("<button class='btn '></button>").text(this._itemData.title);
+			if( this.isEmpty(this._itemData.classname)){
+				btn.addClass('btn-default');
+			}else{
+				btn.addClass(this._itemData.classname);
+			}
 			this._selfElement.append( btn );
 			
 		}else{
@@ -110,12 +115,37 @@ jx.DataGrid_Toolbar_Item = jx.Base.extend({
 	clear:function(){
 		this._selfElement.empty();
 	},
-	jump:function(url,target){
-		if( target == "_blank" ){
-			window.open(url);
-		}else{
-			window.location.href = url;
+	jump:function(){
+		var __self = this;
+		var curUrl = __self._itemData.url;
+		if( curUrl.indexOf("?") < 0 ){
+			curUrl+='?';
 		}
+		curUrl+= $.param(__self._itemData.params || {});
+		if( __self._itemData.target == "_blank" ){
+			window.open( curUrl );
+		}else{
+			window.location.href = curUrl;
+		}
+	},
+	sendData:function(){
+		var __self = this;
+		$.ajax({
+				type:__self._itemData.ajax.method || "post",
+		        url: __self._itemData.url ,  
+		        dataType:'json',
+		        data:__self._itemData.params||{},
+		        xhrFields: {
+			      withCredentials: true
+			    },
+//		        jsonp:'callback',
+		        success:function(result){
+		        	if(__self._itemData.ajax.callback){
+		        		__self._itemData.ajax.callback.apply( __self._selfElement.find(">button")[0] ,  [result]);
+		        	}
+		        }
+		});	
+		
 	},
 	renderAfter:function(){
 		this.bindEvent();
@@ -128,17 +158,19 @@ jx.DataGrid_Toolbar_Item = jx.Base.extend({
 		}else{
 
 			this._selfElement.find(">button").eq(0).on('click', function(){
-					if( __self.isEmpty( __self._itemData.url ) ){return false;}
-	
-					if(!__self.isEmpty( __self._itemData.message ) ){
-						if( confirm( __self._itemData.message ) ){
-								__self.jump(__self._itemData.url,__self._itemData.target);
+				
+						if( __self.isEmpty( __self._itemData.url ) ){return false;}
+		
+						if(__self.isEmpty( __self._itemData.message ) ){
+							 __self.isEmpty( __self._itemData.ajax ) ? __self.jump() :  __self.sendData() ;
 						}else{
-							return false;
+							if( confirm( __self._itemData.message ) ){
+								__self.isEmpty( __self._itemData.ajax ) ? __self.jump() :  __self.sendData() ;
+							}else{
+								return false;
+							}
 						}
-					}else{
-						__self.jump(__self._itemData.url,__self._itemData.target);
-					}
+					return false;
 			});
 		}
 	}
@@ -159,7 +191,7 @@ jx.DataGrid_Toolbar = jx.Base.extend({
 		if(!this.isEmpty( this._toolBarItemsDatas ) ){
 			this._toolItems = [];
 			for(var x in this._toolBarItemsDatas){
-					var item = new jx.DataGrid_Toolbar_Item( {data:this._toolBarItemsDatas[x]} );
+					var item = new jx.DataGrid_Item( {data:this._toolBarItemsDatas[x]} );
 					this._toolItems.push(item);
 			}
 		}
@@ -191,30 +223,30 @@ jx.DataGrid_Toolbar = jx.Base.extend({
 ///<jscompress sourcefile="jx.datagrid.js" />
 
 jx.DataGrid = jx.Base.extend({
-	title:"",
+	_title:"",
 	_selfElement:null,
 	_element:null,
-	toolBarItems:null,
 	_toolBar:null,
 	init:function(options){
 		this._element = {};
-		this.title  = options.title || '';
+		this._title  = options.title || '';
 		this._element.parent = options.parent || null;
 		this._selfElement = $('<div class="panel panel-default jx-DataGrid-box"><div class="panel-heading"></div><div class="panel-body"></div></div>');
 		this._toolBar = new jx.DataGrid_Toolbar({parent:this,ItemsDatas:options.toolBar});
-		this._table = new jx.DataGrid_Table({thead:options.thead, cellData:options.datas,custompanel:options.custompanel});
+		this._table = new jx.DataGrid_Table( options );
 		this.render();
 
 	},
 	render:function(){
 		this.clear();
-		this._selfElement.find(">.panel-heading").text(this.title);
+		this._selfElement.find(">.panel-heading").text(this._title);
 		this._selfElement.find('>.panel-body').eq(0).append( this._toolBar.render() );
 		this._selfElement.find('>.panel-body').eq(0).append( this._table.render() );
-		
-		
 		this._element.parent.append( this._selfElement );
 		this.renderAfter();
+	},
+	search:function(){
+		this._table.search();
 	},
 	clear:function(){
 		this._selfElement.find(">.panel-heading").empty();
@@ -268,10 +300,11 @@ jx.DataGrid = jx.Base.extend({
 //	});
 //	
 
-///<jscompress sourcefile="jx.datagrid.table.thead.filter.js" />
-jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
+///<jscompress sourcefile="jx.datagrid.filter.js" />
+jx.DataGrid_Filter = jx.Base.extend({
 	_filterData:null,
 	_key:null,
+	_selfElement:null,
 	init:function(options){
 		var __self = this;
 		this._filterData =  options.data || null;
@@ -290,18 +323,18 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 		}else if(this._filterData instanceof HTMLElement ){
 				this._selfElement = this._filterData ;
 		}else if($.type( this._filterData ) == "object" && $.isPlainObject(this._filterData ) ){
-			if(this._filterData.classname == 'select'){
+			if(this._filterData.filtername == 'select'){
 				this._selfElement = $('<select class="form-control" >').attr("name", this._key  );
 				for(var x in this._filterData.options){
 					this._selfElement.append($('<option></option>').text( this._filterData.options[x].text ).val(this._filterData.options[x].value));				
 				}
-			}else if(this._filterData.classname == 'daterangepicker' || this._filterData.classname == 'datepicker' ){
+			}else if(this._filterData.filtername == 'daterangepicker' || this._filterData.filtername == 'datepicker' ){
 				this._selfElement = $('<input class="form-control" >').attr("name", this._key  );
 				if(!$.fn.daterangepicker){return this;}
 				var optionSet2 = {
 						opens: 'left',
 						format: 'YYYY-MM-DD',
-						singleDatePicker: this._filterData.classname == 'datepicker' ? true : false,
+						singleDatePicker: this._filterData.filtername == 'datepicker' ? true : false,
 						locale :{
 							"applyLabel": "确定",
 							"cancelLabel": "取消",
@@ -314,7 +347,7 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 						}
 				};
 				$(this._selfElement).daterangepicker(optionSet2);
-			}else if(this._filterData.classname == 'searchselect'){
+			}else if(this._filterData.filtername == 'searchselect'){
 			
 					this._selfElement = $('<select class="form-control" style="width:100%;"></select>').attr("name", this._key  );
 					
@@ -333,22 +366,27 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 
 	},	
 	renderAfter:function(){
-		if( !this.isEmpty(this._filterData.classname) ){
-			if( this._filterData.classname == 'searchselect' ){
+		if( !this.isEmpty(this._filterData.filtername) ){
+			if( this._filterData.filtername == 'searchselect' ){
 				if(!$.fn.select2){return this;}
 				    this._selfElement.select2({
 						ajax:{
 							url:this._filterData.url,
-							type:"post",
+							type:this._filterData.method||"post",
 							cache: true,
 							dataType:"json",
-							data: function (params) {
-						          return {
-						            name: params.term, // search term
-						            page: params.page
-						          };
-				        	},
-				        	
+//							data: function (params) {
+//						          return {
+//						            name: params.term, // search term
+//						            page: params.page
+//						          };
+//				        	},
+//				        	processResults: function (data) {
+//				        		console.log(data);
+//				        		 return {
+//							        results: data
+//							      };
+//				        	},
 				        	delay: 200
 						}});
 			}
@@ -377,10 +415,17 @@ jx.DataGrid_Table = jx.Base.extend({
 	_thead:null,
 	_tbody:null,
 	_custompanel:null,
+	_actions:null,
+	_url:null,
+	_params:null,
+	_method:null,
 	init:function(options){
-		
+		this._url = options.url || null,
+		this._params = options.params || null,
+		this._method = options.method || null,
 		this._selfElement = $('<table class="table table-bordered table-hover"></table>');
 		this._custompanel = options.custompanel || null;
+		this._actions = options.actions || null;
 		this.initThead(options);
 		this.initTbody(options);
 
@@ -407,8 +452,11 @@ jx.DataGrid_Table = jx.Base.extend({
 			}
 			if( !this.isEmpty( data.width) ){ td.css({width:data.width}); }
 			td.find("label").text( data.title );
-			var filter = new jx.DataGrid_Table_Thead_Filter( { key:data.key , data : data.filter } );
+			var filter = new jx.DataGrid_Filter( { key:data.key , data : data.filter } );
 			this._thead.theads.push({'element':td,'filter':filter});
+		}
+		if(!this.isEmpty(this._actions)){
+			this._thead.theads.push({'element':$('<td><div class="form-group"><label for="">操作</label></div></td>')});
 		}
 
 
@@ -416,7 +464,7 @@ jx.DataGrid_Table = jx.Base.extend({
 	initTbody:function(options){
 		this._tbody = {
 			Element: $('<tbody></tbody>'),
-			datas:options.cellData || null ,
+			datas:options.datas || null ,
 		};
 	
 	},
@@ -428,26 +476,81 @@ jx.DataGrid_Table = jx.Base.extend({
 			}
 			this._thead.Element.find('tr').eq(0).append(this._thead.theads[x].element);
 		}
-		this._selfElement.append( this._thead.Element  );
+	
+	},
+	search:function(){
+		var __self = this;
+		this.clearTbody();
+		var params = {};
 		
+		for(var x in  this._thead.theads){
+			var item = this._thead.theads[x].element.find(">.form-group>input,>.form-group>select").eq(0);
+			if(item.length <=0){
+				continue;
+			}
+			if( this.isEmpty( item.val() )){
+				continue;
+			}
+			params[item.attr('name')] = item.val();
+		}
+		console.log(params);
+		
+		
+			$.ajax({
+				type:__self._method || "post",
+		        url: __self._url ,  
+		        dataType:'json',
+//		        async: false,
+		        data:__self.params||{},
+		        xhrFields: {
+			      withCredentials: true
+			    },
+//		        jsonp:'callback',
+		        success:function(result){
+					__self._tbody.datas = result;
+					setTimeout(function(){
+						__self.renderTbody();
+					},100);
+		        }
+			});
 	},
 	renderTbody:function(){
+		var __self = this;
+		if(this.isEmpty( this._tbody.datas ) && this.isEmpty( this._thead.datas )){return false;}
+		if(this.isEmpty( this._tbody.datas) && this.isEmpty( this._url ) ){ return false; }
 
-		if(this.isEmpty( this._tbody.datas ) || this.isEmpty( this._thead.datas )){return false;}	
+		if(this.isEmpty( this._tbody.datas)){ this.search(); return false;}
+		
 		for(var i = 0; i < this._tbody.datas.length; i++ ){
 			var data = this._tbody.datas[i];
 			var tr = $('<tr><td>'+(i+1)+'</td></tr>');
 			if( !this.isEmpty(this._custompanel) && $.type(this._custompanel) == 'function'){
 				tr.append($('<td><i class="glyphicon glyphicon-triangle-right custompanel-launcher"></i></td>'));
 			}
+			var primary = {};
 			for(var x in this._thead.datas ){
 				var key = this._thead.datas[x].key;
 				var td = $('<td>' + data[ key ] + '</td>' );
+				td.attr("key",key);
 				if(this._thead.datas[x].primary === true || this._thead.datas[x].primary == "true"){
+					primary[key] = data[ key ];
 					td.attr( 'primary', true );
 				}
 				tr.append( td );
 			}
+			if(!this.isEmpty(this._actions)){
+				var actionTd = $('<td></td>');	
+				for(var x in this._actions){
+					this._actions[x].params = $.extend(true, this._actions[x].params|| {} , primary);
+					var item = new jx.DataGrid_Item( {data:this._actions[x]} );
+					actionTd.append(item.render());
+					item.bindEvent();
+				}
+				tr.append(actionTd);
+			}
+			
+			
+			
 			this._tbody.Element.append(tr);
 					
 			if( !this.isEmpty(this._custompanel) && $.type(this._custompanel) == 'function'){
@@ -456,15 +559,15 @@ jx.DataGrid_Table = jx.Base.extend({
 				this._tbody.Element.append(customTr);
 			}
 		}
-		this._selfElement.append( this._tbody.Element  );
 		this.bindEvent();
 	},
 	render:function(parentNode){
 		this.clear();
-		//this._selfElement.append( this._thead.render() );
+		
 		this.renderThead();
+		this._selfElement.append( this._thead.Element  );
 		this.renderTbody();
-	
+		this._selfElement.append( this._tbody.Element  );
 		
 		if(!this.isEmpty(parentNode) ){
 			$(parentNode).append( this._selfElement );
@@ -475,19 +578,29 @@ jx.DataGrid_Table = jx.Base.extend({
 	bindEvent:function(){
 		var __self = this;
 		this._tbody.Element.find('.custompanel-launcher').on('click',function(){
-			__self._tbody.Element.find('.custompanel:visible').hide();
-			__self._tbody.Element.find('.custompanel-launcher').
-			removeClass("glyphicon-triangle-bottom").addClass('glyphicon-triangle-right');
-		
-			$(this).removeClass("glyphicon-triangle-right").addClass('glyphicon-triangle-bottom');
-			$(this).closest('tr').next().show(1000);
+			//点击展开
+			if($(this).hasClass('glyphicon-triangle-right')){
+				__self._tbody.Element.find('.custompanel:visible').hide();
+				__self._tbody.Element.find('.custompanel-launcher').
+				removeClass("glyphicon-triangle-bottom").addClass('glyphicon-triangle-right');
+				$(this).removeClass("glyphicon-triangle-right").addClass('glyphicon-triangle-bottom');
+				$(this).closest('tr').next().show(500);
+			}else{
+				__self._tbody.Element.find('.custompanel:visible').hide();
+				__self._tbody.Element.find('.custompanel-launcher').
+				removeClass("glyphicon-triangle-bottom").addClass('glyphicon-triangle-right');
+				
+			}
+
+
+
 		});
 	},
 	clear:function(){
-		
-		
-		
-		
+		this.clearTbody();	
+	},
+	clearTbody:function(){
+		this._tbody.Element.empty(); 
 	},
 	renderAfter:function(){
 		for(var x in this._thead.theads ){

@@ -23,26 +23,36 @@
 				{
 				 parent:$('#iiii'),
 				 title:"hahaha",
+				 url:"http://127.0.0.1:8020/JXDataGrid/data.json",
+				 method:"get",
+				 params:null,
 				 toolBar:[
-				 			{title:"添加",url:"aaa",message:"sss",target:"_blank",element:null,callback:function(){alert(1)}},
-				 			{title:"刷新",url:"aaa",message:"sss",target:"_blank",element:null}
+				 			{title:"添加",classname:"btn-success",target:"_blank",callback:function(){alert(1)}},
+				 			{title:"haha",url:"aaa",message:"sss",target:"_blank",element:null},
+				 			{title:"刷新",callback:function(){o.search();}}
 				 		 ],
 				 thead:[
 				 			{title:"id",key:"id",width:"",filter:'text',primary:true},
-				 			{title:"标题",key:"title",width:"",filter:{classname:'select',options:[{text:"请选择",value:0}]}},
-				 			{title:"描述",key:"description",width:"",filter:{classname:'searchselect'}},
-				 			{title:"创建时间",key:"creation_time",width:"",filter:{classname:'daterangepicker'}}
+				 			{title:"标题",key:"title",width:"",filter:{filtername:'select',options:[{text:"请选择",value:0}]}},
+				 			{title:"描述",key:"description",width:"",filter:{filtername:'searchselect',method:"get",url:"http://127.0.0.1:8020/JXDataGrid/desc.json"}},
+				 			{title:"创建时间",key:"creation_time",width:"",filter:{filtername:'daterangepicker'}}
 				 		],
-				  datas:[
+				 /* datas:[
 				  			{id:1,title:"hia",description:"ioiuoio","creation_time":131564654},
 				  			{id:2,title:"trtrt",description:"uoighgm","creation_time":23423645},
 				  			{id:3,title:"fgfgf",description:"rtyrtytytry","creation_time":786553455},
 				  			{id:7,title:"fhggfgf",description:"nbfghhfsdcvbturtrt","creation_time":345646456},
 				  			{id:5,title:"fghfghh",description:"hmerterereretge","creation_time":564566454},
-				  		],
+				  		],*/
 				  custompanel:function(data){
 				  	return $("<div style='height: 200px;'>ahihihi</div>");
-				  }
+				  },
+				  actions:[
+				  			{title:"查看",url:"aaa",classname:"btn-primary",message:"sss",target:"_blank",element:null,callback:function(){alert(1)}},
+				 			{title:"编辑",url:"aaa",classname:"btn-warning",message:"sss",target:"_blank",element:null},
+				 			{title:"删除",url:"aaa",classname:"btn-danger",message:"sss",ajax:{method:"post",callback:function(result){console.log(this)}}},
+				 			{title:"推荐",url:"aaa",classname:"btn-success",message:"sss",target:"_blank",element:null}
+				  ]
 				}
 				);
 	

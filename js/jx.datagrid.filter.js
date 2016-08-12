@@ -1,6 +1,7 @@
-jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
+jx.DataGrid_Filter = jx.Base.extend({
 	_filterData:null,
 	_key:null,
+	_selfElement:null,
 	init:function(options){
 		var __self = this;
 		this._filterData =  options.data || null;
@@ -19,18 +20,18 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 		}else if(this._filterData instanceof HTMLElement ){
 				this._selfElement = this._filterData ;
 		}else if($.type( this._filterData ) == "object" && $.isPlainObject(this._filterData ) ){
-			if(this._filterData.classname == 'select'){
+			if(this._filterData.filtername == 'select'){
 				this._selfElement = $('<select class="form-control" >').attr("name", this._key  );
 				for(var x in this._filterData.options){
 					this._selfElement.append($('<option></option>').text( this._filterData.options[x].text ).val(this._filterData.options[x].value));				
 				}
-			}else if(this._filterData.classname == 'daterangepicker' || this._filterData.classname == 'datepicker' ){
+			}else if(this._filterData.filtername == 'daterangepicker' || this._filterData.filtername == 'datepicker' ){
 				this._selfElement = $('<input class="form-control" >').attr("name", this._key  );
 				if(!$.fn.daterangepicker){return this;}
 				var optionSet2 = {
 						opens: 'left',
 						format: 'YYYY-MM-DD',
-						singleDatePicker: this._filterData.classname == 'datepicker' ? true : false,
+						singleDatePicker: this._filterData.filtername == 'datepicker' ? true : false,
 						locale :{
 							"applyLabel": "确定",
 							"cancelLabel": "取消",
@@ -43,7 +44,7 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 						}
 				};
 				$(this._selfElement).daterangepicker(optionSet2);
-			}else if(this._filterData.classname == 'searchselect'){
+			}else if(this._filterData.filtername == 'searchselect'){
 			
 					this._selfElement = $('<select class="form-control" style="width:100%;"></select>').attr("name", this._key  );
 					
@@ -62,22 +63,27 @@ jx.DataGrid_Table_Thead_Filter = jx.Base.extend({
 
 	},	
 	renderAfter:function(){
-		if( !this.isEmpty(this._filterData.classname) ){
-			if( this._filterData.classname == 'searchselect' ){
+		if( !this.isEmpty(this._filterData.filtername) ){
+			if( this._filterData.filtername == 'searchselect' ){
 				if(!$.fn.select2){return this;}
 				    this._selfElement.select2({
 						ajax:{
 							url:this._filterData.url,
-							type:"post",
+							type:this._filterData.method||"post",
 							cache: true,
 							dataType:"json",
-							data: function (params) {
-						          return {
-						            name: params.term, // search term
-						            page: params.page
-						          };
-				        	},
-				        	
+//							data: function (params) {
+//						          return {
+//						            name: params.term, // search term
+//						            page: params.page
+//						          };
+//				        	},
+//				        	processResults: function (data) {
+//				        		console.log(data);
+//				        		 return {
+//							        results: data
+//							      };
+//				        	},
 				        	delay: 200
 						}});
 			}
